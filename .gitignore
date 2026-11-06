@@ -1,0 +1,27 @@
+# ROS / colcon build products and Python environments
+/build/
+/install/
+/log/
+/.venv/
+**/__pycache__/
+*.py[cod]
+
+# Local environment inventories and original working notes
+/ros2_environment_inventory.txt
+/snakebot_*_report_*.md
+/snakebot_validation/
+/teacher_demo/
+
+# Local secrets, recordings, bags, and editor files
+.env
+.env.*
+*.log
+*.bag
+*.db3
+*.mcap
+*.webm
+*.mp4
+.DS_Store
+*~
+*.swp
+

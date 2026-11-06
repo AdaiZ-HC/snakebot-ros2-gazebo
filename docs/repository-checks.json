@@ -1,0 +1,14 @@
+{
+  "checked_date": "2026-11-07",
+  "unit_test_command": "python3 -m unittest discover -s src/snakebot_description/tests -v",
+  "unit_tests_run": 24,
+  "unit_test_result": "OK",
+  "python_syntax": "passed",
+  "package_xml_and_world_xacro_xml_structure": "passed",
+  "documentation_relative_links": "passed",
+  "package_files_matched_original": 18,
+  "original_package_modified": false,
+  "my_test_pkg_included": false,
+  "new_gazebo_motion_acceptance_run": false,
+  "new_gpu_or_rtf_measurement": false
+}

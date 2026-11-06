@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="snakebot">
+  <xacro:arg name="controllers_file" default="$(find snakebot_description)/config/controllers.yaml"/>
+  <material name="black"><color rgba="0.018 0.022 0.028 1"/></material>
+  <material name="silver"><color rgba="0.56 0.61 0.67 1"/></material>
+  <material name="bright_gold"><color rgba="0.96 0.69 0.18 1"/></material>
+  <material name="tongue_red"><color rgba="0.88 0.012 0.035 1"/></material>
+  <material name="eye_black"><color rgba="0.008 0.008 0.012 1"/></material>
+  <xacro:macro name="box_inertia" params="mass length width height x">
+    <inertial>
+      <origin xyz="${x} 0 0"/><mass value="${mass}"/>
+      <inertia ixx="${mass*(width*width+height*height)/12.0}"
+        iyy="${mass*(length*length+height*height)/12.0}"
+        izz="${mass*(length*length+width*width)/12.0}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </xacro:macro>
+  <xacro:macro name="box_visual" params="name x y z length width height material">
+    <!-- Leave URDF visuals unnamed: named visuals prevent material overrides
+         in the installed URDF-to-SDF converter. SDF generates unique names. -->
+    <visual>
+      <origin xyz="${x} ${y} ${z}"/>
+      <geometry><box size="${length} ${width} ${height}"/></geometry><material name="${material}"/>
+    </visual>
+  </xacro:macro>
+  <xacro:macro name="hub" params="name center_x side armor">
+    <xacro:box_visual name="${name}_armor_${side}" x="${center_x}" y="${side*0.056}" z="0"
+      length="0.128" width="0.016" height="0.100" material="${armor}"/>
+    <!-- These are decorative hubs, not physical wheels. -->
+    <visual>
+      <origin xyz="${center_x} ${side*0.071} 0" rpy="${pi/2} 0 0"/>
+      <geometry><cylinder radius="0.028" length="0.012"/></geometry><material name="black"/>
+    </visual>
+    <visual>
+      <origin xyz="${center_x} ${side*0.078} 0" rpy="${pi/2} 0 0"/>
+      <geometry><cylinder radius="0.010" length="0.003"/></geometry><material name="bright_gold"/>
+    </visual>
+  </xacro:macro>
+  <xacro:macro name="body_segment" params="name center_x armor:='bright_gold'">
+    <link name="${name}">
+      <!-- Uniform box envelope: 0.15 x 0.12 x 0.12 m, 0.8 kg. -->
+      <xacro:box_inertia mass="0.8" length="0.15" width="0.12" height="0.12" x="${center_x}"/>
+      <xacro:box_visual name="${name}_frame" x="${center_x}" y="0" z="0"
+        length="0.15" width="0.096" height="0.112" material="silver"/>
+      <xacro:box_visual name="${name}_spine" x="${center_x}" y="0" z="0.056"
+        length="0.12" width="0.040" height="0.008" material="black"/>
+      <xacro:box_visual name="${name}_front_band" x="${center_x+0.060}" y="0" z="0"
+        length="0.012" width="0.12" height="0.12" material="${armor}"/>
+      <xacro:box_visual name="${name}_rear_band" x="${center_x-0.060}" y="0" z="0"
+        length="0.012" width="0.12" height="0.12" material="${armor}"/>
+      <xacro:hub name="${name}" center_x="${center_x}" side="1" armor="${armor}"/>
+      <xacro:hub name="${name}" center_x="${center_x}" side="-1" armor="${armor}"/>
+      <collision name="${name}_box">
+        <origin xyz="${center_x} 0 0"/><geometry><box size="0.146 0.116 0.118"/></geometry>
+      </collision>
+    </link>
+    <gazebo reference="${name}">
+      <mu1>0.05</mu1><mu2>0.05</mu2><selfCollide>false</selfCollide>
+      <visual><material><specular>0.85 0.85 0.85 1</specular>
+        <pbr><metal><metalness>0.92</metalness><roughness>0.22</roughness></metal></pbr>
+      </material></visual>
+    </gazebo>
+  </xacro:macro>
+  <!-- base_link is the first BODY, so the planar model root stays level. -->
+  <xacro:body_segment name="base_link" center_x="0"/>
+  <link name="head_yaw_link">
+    <!-- Give the now-articulated neck a finite, well-conditioned inertia. -->
+    <xacro:box_inertia mass="0.08" length="0.045" width="0.08" height="0.05" x="0"/>
+  </link>
+  <joint name="joint_1" type="revolute">
+    <parent link="base_link"/><child link="head_yaw_link"/><origin xyz="0.095 0 0.035"/>
+    <axis xyz="0 0 1"/><limit lower="-0.7" upper="0.7" effort="30" velocity="8"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+  <joint name="head_pitch_joint" type="revolute">
+    <parent link="head_yaw_link"/><child link="head_link"/>
+    <origin xyz="0 0 0"/><axis xyz="0 -1 0"/>
+    <limit lower="-0.22" upper="0.85" effort="30" velocity="3"/>
+    <dynamics damping="0.12" friction="0.01"/>
+  </joint>
+  <link name="head_link">
+    <xacro:box_inertia mass="1.52" length="0.22" width="0.12" height="0.10" x="0.11"/>
+    <xacro:box_visual name="lower_jaw" x="0.11" y="0" z="-0.026"
+      length="0.22" width="0.12" height="0.048" material="black"/>
+    <xacro:box_visual name="upper_jaw" x="0.11" y="0" z="0.020"
+      length="0.19" width="0.105" height="0.044" material="black"/>
+    <xacro:box_visual name="forehead_armor" x="0.092" y="0" z="0.046"
+      length="0.13" width="0.112" height="0.008" material="black"/>
+    <xacro:box_visual name="nose" x="0.205" y="0" z="0.015"
+      length="0.020" width="0.110" height="0.035" material="black"/>
+    <visual><origin xyz="0.193 0.055 0.036"/>
+      <geometry><sphere radius="0.015"/></geometry><material name="eye_black"/></visual>
+    <visual><origin xyz="0.193 -0.055 0.036"/>
+      <geometry><sphere radius="0.015"/></geometry><material name="eye_black"/></visual>
+    <collision name="head_box"><origin xyz="0.11 0 0"/>
+      <geometry><box size="0.214 0.116 0.096"/></geometry></collision>
+  </link>
+  <gazebo reference="head_link">
+    <mu1>0.05</mu1><mu2>0.05</mu2><selfCollide>false</selfCollide>
+    <visual><material><specular>0.9 0.9 0.9 1</specular>
+      <pbr><metal><metalness>0.85</metalness><roughness>0.14</roughness></metal></pbr>
+    </material></visual>
+  </gazebo>
+  <joint name="tongue_joint" type="prismatic">
+    <parent link="head_link"/><child link="tongue_link"/>
+    <origin xyz="0.19 0 0"/><axis xyz="1 0 0"/>
+    <limit lower="-0.05" upper="0.12" effort="5" velocity="3"/>
+    <dynamics damping="0.01"/>
+  </joint>
+  <link name="tongue_link">
+    <xacro:box_inertia mass="0.003" length="0.08" width="0.024" height="0.006" x="-0.01"/>
+    <visual><origin xyz="-0.0225 0 0" rpy="0 ${pi/2} 0"/>
+      <geometry><cylinder radius="0.003" length="0.045"/></geometry><material name="tongue_red"/></visual>
+    <visual><origin xyz="0.0117 0.0043 0" rpy="0 ${pi/2} 0.35"/>
+      <geometry><cylinder radius="0.0025" length="0.025"/></geometry><material name="tongue_red"/></visual>
+    <visual><origin xyz="0.0117 -0.0043 0" rpy="0 ${pi/2} -0.35"/>
+      <geometry><cylinder radius="0.0025" length="0.025"/></geometry><material name="tongue_red"/></visual>
+  </link>
+  <gazebo reference="tongue_link"><selfCollide>false</selfCollide>
+    <visual><material><emissive>0.15 0.001 0.003 1</emissive>
+      <pbr><metal><metalness>0</metalness><roughness>0.45</roughness></metal></pbr>
+    </material></visual>
+  </gazebo>
+  <xacro:macro name="tail_segment" params="index parent joint_x">
+    <xacro:body_segment name="body_${index}" center_x="-0.075"
+      armor="${'bright_gold' if int(index) % 2 else 'silver'}"/>
+    <joint name="joint_${index}" type="revolute">
+      <parent link="${parent}"/><child link="body_${index}"/>
+      <origin xyz="${joint_x} 0 0"/><axis xyz="0 0 1"/>
+      <limit lower="-0.7" upper="0.7" effort="30" velocity="8"/>
+      <dynamics damping="0.05" friction="0.01"/>
+    </joint>
+  </xacro:macro>
+  <xacro:tail_segment index="2" parent="base_link" joint_x="-0.095"/>
+  <xacro:tail_segment index="3" parent="body_2" joint_x="-0.17"/>
+  <xacro:tail_segment index="4" parent="body_3" joint_x="-0.17"/>
+  <xacro:tail_segment index="5" parent="body_4" joint_x="-0.17"/>
+  <xacro:tail_segment index="6" parent="body_5" joint_x="-0.17"/>
+  <xacro:tail_segment index="7" parent="body_6" joint_x="-0.17"/>
+  <xacro:tail_segment index="8" parent="body_7" joint_x="-0.17"/>
+  <xacro:macro name="controlled_joint" params="index">
+    <joint name="joint_${index}">
+      <command_interface name="position"><param name="min">-0.7</param><param name="max">0.7</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+    <xacro:controlled_joint index="1"/><xacro:controlled_joint index="2"/>
+    <xacro:controlled_joint index="3"/><xacro:controlled_joint index="4"/>
+    <xacro:controlled_joint index="5"/><xacro:controlled_joint index="6"/>
+    <xacro:controlled_joint index="7"/><xacro:controlled_joint index="8"/>
+    <joint name="head_pitch_joint">
+      <command_interface name="position"><param name="min">-0.22</param><param name="max">0.85</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0</param></state_interface><state_interface name="velocity"/>
+    </joint>
+    <joint name="tongue_joint">
+      <command_interface name="position"><param name="min">-0.05</param><param name="max">0.12</param></command_interface>
+      <state_interface name="position"><param name="initial_value">0</param></state_interface><state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(arg controllers_file)</parameters>
+      <position_proportional_gain>0.5</position_proportional_gain>
+    </plugin>
+    <plugin filename="gz-sim-velocity-control-system" name="gz::sim::systems::VelocityControl"/>
+    <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>odom</odom_frame><robot_base_frame>base_link</robot_base_frame>
+      <odom_topic>/model/snakebot/odometry</odom_topic>
+      <odom_publish_frequency>30</odom_publish_frequency><dimensions>2</dimensions>
+    </plugin>
+  </gazebo>
+</robot>

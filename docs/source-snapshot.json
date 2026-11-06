@@ -1,0 +1,97 @@
+{
+  "prepared_date": "2026-11-07",
+  "source_package": "snakebot_description",
+  "source_modified": false,
+  "package_files": [
+    {
+      "path": "src/snakebot_description/CMakeLists.txt",
+      "sha256": "98184fadcc1ab53974418efbf02bd01f7f40c01241096e48a79adc10d271aea4",
+      "bytes": 629
+    },
+    {
+      "path": "src/snakebot_description/README.md",
+      "sha256": "698ce534ef8f23e3cdc57ac6ee1234eb30e5d983db5a3820dfdefc944e40c4c0",
+      "bytes": 9513
+    },
+    {
+      "path": "src/snakebot_description/config/controllers.yaml",
+      "sha256": "3df8fce1d068e9c289ced3ee72862710591d88f639269f58bc9199f4271fb112",
+      "bytes": 2172
+    },
+    {
+      "path": "src/snakebot_description/config/forest_map.yaml",
+      "sha256": "77e913ecb1b8ba19a0510fadaf9de865d6284a790c31b6be90a33c43a837e97f",
+      "bytes": 2112
+    },
+    {
+      "path": "src/snakebot_description/config/gui.config",
+      "sha256": "253d8ee0c1fe61b56df48d0891afb82cd5b0a2d43cb95efb5d81f6920c921ebf",
+      "bytes": 2669
+    },
+    {
+      "path": "src/snakebot_description/config/ros_gz_bridge.yaml",
+      "sha256": "041a9b81d5425936fcf6702b75011939a373f6fe5948a7a2345b7db927bbfa78",
+      "bytes": 621
+    },
+    {
+      "path": "src/snakebot_description/launch/snakebot_gazebo.launch.py",
+      "sha256": "2175d5596e050dd27490ecd09f4083e44d2c2cc80f6a368ee8ae8033b2a0a6fc",
+      "bytes": 7892
+    },
+    {
+      "path": "src/snakebot_description/package.xml",
+      "sha256": "849c883da91de70cc9dd151e402c9ea2b401d17405d69ba27bee9d9958bd410f",
+      "bytes": 1382
+    },
+    {
+      "path": "src/snakebot_description/scripts/behavior_core.py",
+      "sha256": "59b4e0d9661f6f9efe99c7b48498655886876c4aea41013973e4dd6632bafcb7",
+      "bytes": 16383
+    },
+    {
+      "path": "src/snakebot_description/scripts/snake_behavior.py",
+      "sha256": "62a3b235f05ef714a969f162007ffe6034446073cb96a7263a895b7ae46a2673",
+      "bytes": 12632
+    },
+    {
+      "path": "src/snakebot_description/scripts/snake_roam.py",
+      "sha256": "474482894cb09236616916dc3c94b0691d9d74ee81ce9d5f8a171ab422c17003",
+      "bytes": 14971
+    },
+    {
+      "path": "src/snakebot_description/scripts/snake_wave.py",
+      "sha256": "40dd0c8b77041991341be7c19f0ca43affc19a42b2e041a26923308958eaec19",
+      "bytes": 3510
+    },
+    {
+      "path": "src/snakebot_description/tests/test_behavior.py",
+      "sha256": "f9d97ead42e67e8825972b97483c93b5bf02033134dc81a686b0b70dd1e38304",
+      "bytes": 6382
+    },
+    {
+      "path": "src/snakebot_description/tests/test_roam.py",
+      "sha256": "5cfb26892a5660b06276a23cf4b3ee92feceb9b48a6c0ee61bb98c55d77617a8",
+      "bytes": 3703
+    },
+    {
+      "path": "src/snakebot_description/tests/test_trajectory_contract.py",
+      "sha256": "d45abe4a37b0945b9d8a3f16ab7877b71c84ecea367214c2dae4aac0bb7c1290",
+      "bytes": 3248
+    },
+    {
+      "path": "src/snakebot_description/tools/generate_forest.py",
+      "sha256": "1f745487fd38a27e85bc2f7af66a2b242ccb233b94c6008ef2503ae58a2d2f7a",
+      "bytes": 6356
+    },
+    {
+      "path": "src/snakebot_description/urdf/snakebot.urdf.xacro",
+      "sha256": "cc8b19487cfffdd323944e15eee4bbe84d92054b24c52d17d4fed5c8dfadc3e4",
+      "bytes": 10009
+    },
+    {
+      "path": "src/snakebot_description/worlds/empty.sdf",
+      "sha256": "59c08363ce6691c16ea17f2945c76a2a9a6dd921c212b730ae5b80b36e330f97",
+      "bytes": 310825
+    }
+  ]
+}

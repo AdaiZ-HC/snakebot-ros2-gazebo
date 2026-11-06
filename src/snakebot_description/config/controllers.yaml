@@ -1,0 +1,53 @@
+controller_manager:
+  ros__parameters:
+    use_sim_time: true
+    update_rate: 500
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_state_broadcaster:
+  ros__parameters:
+    use_sim_time: true
+
+joint_trajectory_controller:
+  ros__parameters:
+    use_sim_time: true
+    joints: [joint_1, joint_2, joint_3, joint_4, joint_5, joint_6, joint_7, joint_8, head_pitch_joint, tongue_joint]
+    command_interfaces: [position]
+    state_interfaces: [position, velocity]
+    # Streaming sine/flick trajectories are replaced before their final point.
+    # Their analytical end velocities are deliberately nonzero.
+    allow_nonzero_velocity_at_trajectory_end: true
+    # Continue from the previous command when replacing a short trajectory.
+    interpolate_from_desired_state: true
+    constraints:
+      goal_time: 1.0
+      stopped_velocity_tolerance: 0.1
+      joint_1: {trajectory: 0.1, goal: 0.05}
+      joint_2: {trajectory: 0.1, goal: 0.05}
+      joint_3: {trajectory: 0.1, goal: 0.05}
+      joint_4: {trajectory: 0.1, goal: 0.05}
+      joint_5: {trajectory: 0.1, goal: 0.05}
+      joint_6: {trajectory: 0.1, goal: 0.05}
+      joint_7: {trajectory: 0.1, goal: 0.05}
+      joint_8: {trajectory: 0.1, goal: 0.05}
+      head_pitch_joint: {trajectory: 0.3, goal: 0.05}
+      tongue_joint: {trajectory: 0.04, goal: 0.005}
+    allow_partial_joints_goal: false
+    # Starting gains; tune against the actual simulation if needed.
+    # With a position command interface JTC forwards positions, so these PID
+    # gains are reserved for velocity/effort mode and do NOT drive this loop.
+    # gz_ros2_control's position_proportional_gain=0.5 drives position tracking.
+    gains:
+      joint_1: {p: 100.0, d: 0.75}
+      joint_2: {p: 100.0, d: 0.75}
+      joint_3: {p: 100.0, d: 0.75}
+      joint_4: {p: 100.0, d: 0.75}
+      joint_5: {p: 100.0, d: 0.75}
+      joint_6: {p: 100.0, d: 0.75}
+      joint_7: {p: 100.0, d: 0.75}
+      joint_8: {p: 100.0, d: 0.75}
+      head_pitch_joint: {p: 100.0, d: 0.75}
+      tongue_joint: {p: 100.0, d: 0.5}
